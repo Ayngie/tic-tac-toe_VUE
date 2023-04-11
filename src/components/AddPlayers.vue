@@ -17,8 +17,9 @@ function handleSubmit() {
 
     if (players.value.length === 2) {
         console.log("There are now two players")
-        //emit starta spel gameon till true
+        //emit starta spel // ändra gameOn till true
         emit("startGame")
+        localStorage.setItem("players", JSON.stringify(players));
     }
 }
 </script>

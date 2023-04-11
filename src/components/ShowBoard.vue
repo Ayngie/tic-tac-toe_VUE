@@ -1,9 +1,20 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import ShowSquare from './ShowSquare.vue';
+import { Player } from '../models/Player';
 
-let state = ref<string[]>([]);
+let playerList: Player[] = JSON.parse(
+    localStorage.getItem("players") || "[]"
+);
+console.log(playerList)
+
+// let playerX = playerList.values[0];
+
 let currentPlayer = ref<string>("PlayerX");
+
+function handleClick(i: number) {
+    console.log("You clicked square: ", i)
+}
 </script>
 
 <template>
@@ -12,7 +23,7 @@ let currentPlayer = ref<string>("PlayerX");
 
     <div class="container">
         <div class="board">
-            <ShowSquare v-for="n in 9" />
+            <ShowSquare @click.once="handleClick(index)" v-for="(square, index) in 9" :key="square" />
         </div>
 
     </div>
