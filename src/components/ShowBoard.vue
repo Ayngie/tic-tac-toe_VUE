@@ -45,7 +45,19 @@ function handleClick(i: number) {
     display: flex;
     flex-wrap: wrap;
     width: 500px;
+}
 
+.square {
+    margin: 2px;
+}
+
+.square:hover {
+    cursor: pointer;
+}
+
+.square:active {
+    background-color: green;
+    color: white;
 }
 
 h1 {
