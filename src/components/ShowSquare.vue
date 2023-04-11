@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+let symbol = ref<string>("");
 
 </script>
 
 <template>
     <div class="square">
-        <h1>X/0</h1>
+        <h1>{{ symbol }}</h1>
     </div>
 </template>
 
