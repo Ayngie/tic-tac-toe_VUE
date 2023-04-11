@@ -7,6 +7,8 @@ const players = ref<Player[]>([]);
 
 let playerOneAdded = false;
 
+let emit = defineEmits(["startGame"])
+
 function handleSubmit() {
     players.value.push(new Player(state.value.name, false));
     state.value = { name: "", playerWins: false } //rensa inputrutorna
@@ -16,6 +18,7 @@ function handleSubmit() {
     if (players.value.length === 2) {
         console.log("There are now two players")
         //emit starta spel gameon till true
+        emit("startGame")
     }
 }
 </script>
@@ -24,20 +27,21 @@ function handleSubmit() {
     <h1> Welcome to this game of tic-tac-toe!</h1>
     <h2> Enter player names to start:</h2>
 
-    <form @submit.prevent="handleSubmit" v-if="playerOneAdded">
-        <div class="inputRows">
-            <input v-model="state.name" type="text" placeholder="Type name here..." />
-            <button type="submit" class="submitBtn">Add player 2</button>
-        </div>
-    </form>
-
-    <form @submit.prevent="handleSubmit" v-else>
+    <form @submit.prevent="handleSubmit" v-if="playerOneAdded === false">
         <div class="inputRows">
             <input v-model="state.name" type="text" placeholder="Type name here..." />
             <button type="submit" class="submitBtn">Add player 1</button>
 
         </div>
     </form>
+
+    <form @submit.prevent="handleSubmit" v-else>
+        <div class="inputRows">
+            <input v-model="state.name" type="text" placeholder="Type name here..." />
+            <button type="submit" class="submitBtn">Add player 2</button>
+        </div>
+    </form>
+
 
     <div v-if="playerOneAdded">
         <p>Game participants:</p>
