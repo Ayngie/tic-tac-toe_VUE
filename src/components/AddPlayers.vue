@@ -4,6 +4,7 @@ import { Player } from '../models/Player';
 
 let state = ref<Player>({ name: "", playerWins: false });
 const players = ref<Player[]>([]);
+
 let playerOneAdded = false;
 
 function handleSubmit() {
@@ -11,48 +12,62 @@ function handleSubmit() {
     state.value = { name: "", playerWins: false } //rensa inputrutorna
     playerOneAdded = true;
     console.log(players.value)
+
+    if (players.value.length === 2) {
+        console.log("There are now two players")
+        //emit starta spel gameon till true
+    }
 }
 </script>
 
 <template>
-    <h3>Welcome</h3>
-<form @submit.prevent="handleSubmit" v-if="playerOneAdded">
-        <div>
+    <h1> Welcome to this game of tic-tac-toe!</h1>
+    <h2> Enter player names to start:</h2>
+
+    <form @submit.prevent="handleSubmit" v-if="playerOneAdded">
+        <div class="inputRows">
             <input v-model="state.name" type="text" placeholder="Type name here..." />
             <button type="submit" class="submitBtn">Add player 2</button>
 
         </div>
     </form>
+
     <form @submit.prevent="handleSubmit" v-else>
-        <div>
+        <div class="inputRows">
             <input v-model="state.name" type="text" placeholder="Type name here..." />
             <button type="submit" class="submitBtn">Add player 1</button>
 
         </div>
     </form>
-    <div>
-        <!-- <p>{{ state }}</p>
-                <p>{{ playerOneAdded }}</p> -->
+
+    <div v-if="playerOneAdded">
         <p>Game participants:</p>
-        <div v-for="player in players"> {{ player.name }} </div>
+        <div v-for="player in players" class="participant-names"> {{ player.name }} </div>
     </div>
 </template>
 
 <style scoped>
-.container {
+form {
     display: flex;
     justify-content: center;
-    align-items: center;
 }
 
-.board {
+.inputRows {
     display: flex;
-    flex-wrap: wrap;
-    width: 500px;
+    justify-content: space-around;
+    align-items: center;
+    width: 35%;
+}
 
+input {
+    padding: 5px;
 }
 
 h1 {
     color: green;
+}
+
+.participant-names {
+    font-style: italic;
 }
 </style>
