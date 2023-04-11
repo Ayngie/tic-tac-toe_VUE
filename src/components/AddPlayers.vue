@@ -28,7 +28,6 @@ function handleSubmit() {
         <div class="inputRows">
             <input v-model="state.name" type="text" placeholder="Type name here..." />
             <button type="submit" class="submitBtn">Add player 2</button>
-
         </div>
     </form>
 
