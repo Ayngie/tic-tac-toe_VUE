@@ -19,7 +19,7 @@ function handleSubmit() {
         console.log("There are now two players")
         //emit starta spel // ändra gameOn till true
         emit("startGame")
-        localStorage.setItem("players", JSON.stringify(players));
+        localStorage.setItem("players", JSON.stringify(players.value));
     }
 }
 </script>

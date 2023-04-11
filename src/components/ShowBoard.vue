@@ -1,16 +1,21 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import ShowSquare from './ShowSquare.vue';
 import { Player } from '../models/Player';
 
 let playerList: Player[] = JSON.parse(
     localStorage.getItem("players") || "[]"
 );
-console.log(playerList)
 
-// let playerX = playerList.values[0];
+onMounted(() => {
+    console.log(playerList[0])
+    console.log(playerList[1])
+    // let playerX = playerList[0];
+    // let playerY = playerList[1];
+});
 
-let currentPlayer = ref<string>("PlayerX");
+
+let currentPlayer = ref<string>("");
 
 function handleClick(i: number) {
     console.log("You clicked square: ", i)
