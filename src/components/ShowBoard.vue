@@ -3,10 +3,12 @@ import { ref } from 'vue';
 import ShowSquare from './ShowSquare.vue';
 
 let state = ref<string[]>([]);
+let currentPlayer = ref<string>("PlayerX");
 </script>
 
 <template>
     <h1> Welcome to this game of tic-tac-toe</h1>
+    <h2>{{ currentPlayer }} - make your move!</h2>
 
     <div class="container">
         <div class="board">
