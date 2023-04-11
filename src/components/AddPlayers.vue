@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { Player } from '../models/Player';
 
-let state = ref<Player>({ name: "", playerWins: false });
+let state = ref<Player>({ name: "", role: "", score: 0 });
 const players = ref<Player[]>([]);
 
 let playerOneAdded = false;
@@ -10,8 +10,8 @@ let playerOneAdded = false;
 let emit = defineEmits(["startGame"])
 
 function handleSubmit() {
-    players.value.push(new Player(state.value.name, false));
-    state.value = { name: "", playerWins: false } //rensa inputrutorna
+    players.value.push(new Player(state.value.name, state.value.role, state.value.score));
+    state.value = { name: "", role: "", score: 0 } //rensa inputrutorna
     playerOneAdded = true;
     console.log(players.value)
 
