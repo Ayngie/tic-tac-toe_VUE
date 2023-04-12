@@ -30,11 +30,14 @@ function handleClick(i: number) {
 
 //play again:
 function playAgain() {
+    console.log("You clicked the button 'Play again'!")
 }
 
 //quit game:
+let emit = defineEmits(["quitGame"])
+
 function quitGame() {
-    localStorage.clear;
+    emit("quitGame")
 }
 
 </script>
@@ -50,9 +53,9 @@ function quitGame() {
     </div>
 
     <div class="handle-game-buttons">
-        <button type="button" @click.once="playAgain()"> Quit game
+        <button type="button" @click.once="playAgain()"> Play again
         </button>
-        <button type="button" @click.once="quitGame()"> Play again!
+        <button type="button" @click.once="quitGame()"> Quit game
         </button>
     </div>
 </template>
