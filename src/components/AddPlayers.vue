@@ -16,7 +16,7 @@ function handleSubmit() {
 
     if (players.value.length === 2) {
         console.log("There are now two players")
-        //emit starta spel // ändra gameOn till true
+        //emit starta spel // ändra gameOn till true 
         emit("startGame")
         localStorage.setItem("players", JSON.stringify(players.value));
     }
@@ -44,12 +44,16 @@ function handleSubmit() {
 
 
     <div v-if="playerOneAdded">
-        <p>Game participants:</p>
-        <div v-for="player in players" class="participant-names"> {{ player.name }} </div>
+        <span class="participant-header">Game participants: </span>
+        <span v-for="player in players" class="participant-names"> {{ player.name }} </span>
     </div>
 </template>
 
 <style scoped>
+h1 {
+    color: green;
+}
+
 form {
     display: flex;
     justify-content: center;
@@ -66,11 +70,17 @@ input {
     padding: 5px;
 }
 
-h1 {
+button:hover {
+    border-color: green;
+}
+
+.participant-header {
     color: green;
+    font-weight: bold;
 }
 
 .participant-names {
+    color: green;
     font-style: italic;
 }
 </style>

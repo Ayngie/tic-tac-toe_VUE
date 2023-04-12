@@ -2,7 +2,6 @@
 import { onMounted, ref } from 'vue';
 import { Player } from '../models/Player';
 import ShowSquare from './ShowSquare.vue';
-import ResetGame from './ResetGame.vue';
 
 //import list:
 let playerList: Player[] = JSON.parse(
@@ -28,6 +27,16 @@ function handleClick(i: number) {
     playerSymbol.value = "X"
 
 }
+
+//play again:
+function playAgain() {
+}
+
+//quit game:
+function quitGame() {
+    localStorage.clear;
+}
+
 </script>
 
 <template>
@@ -38,13 +47,21 @@ function handleClick(i: number) {
         <div class="board">
             <ShowSquare :msg="playerSymbol" @click.once="handleClick(index)" v-for="(square, index) in 9" :key="square" />
         </div>
-
     </div>
 
-    <ResetGame />
+    <div class="handle-game-buttons">
+        <button type="button" @click.once="playAgain()"> Quit game
+        </button>
+        <button type="button" @click.once="quitGame()"> Play again!
+        </button>
+    </div>
 </template>
 
 <style scoped>
+h1 {
+    color: green;
+}
+
 .container {
     display: flex;
     justify-content: center;
@@ -70,7 +87,15 @@ function handleClick(i: number) {
     color: white;
 }
 
-h1 {
-    color: green;
+.handle-game-buttons {
+    padding: 15px;
+}
+
+button {
+    margin: 10px;
+}
+
+button:hover {
+    border-color: green;
 }
 </style>
