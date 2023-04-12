@@ -45,7 +45,7 @@ function handleSubmit() {
 
     <div v-if="playerOneAdded">
         <span class="participant-header">Game participants: </span>
-        <span v-for="player in players" class="participant-names"> {{ player.name }} </span>
+        <span v-for="player in players" class="participant-names"> {{ player.name + ", " }} </span>
     </div>
 </template>
 
