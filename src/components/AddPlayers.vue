@@ -2,10 +2,10 @@
 import { ref } from 'vue';
 import { Player } from '../models/Player';
 
-let state = ref<Player>({ name: "", role: "", score: 0 });
 const players = ref<Player[]>([]);
-
+let state = ref<Player>({ name: "", role: "", score: 0 });
 let playerOneAdded = false;
+
 let emit = defineEmits(["startGame"])
 
 function handleSubmit() {

@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import ShowSquare from './ShowSquare.vue';
 import { Player } from '../models/Player';
+import ShowSquare from './ShowSquare.vue';
 import ResetGame from './ResetGame.vue';
 
 //import list:
-defineProps<{ currentPlayers: Player[] }>()
 let playerList: Player[] = JSON.parse(
     localStorage.getItem("players") || "[]"
 );
