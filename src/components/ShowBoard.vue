@@ -37,6 +37,7 @@ function playAgain() {
 let emit = defineEmits(["quitGame"])
 
 function quitGame() {
+    console.log("You clicked the button 'Quit game'!")
     emit("quitGame")
 }
 
