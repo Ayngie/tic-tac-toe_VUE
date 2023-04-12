@@ -30,7 +30,7 @@ function handleSubmit() {
 
     <form @submit.prevent="handleSubmit" v-if="playerOneAdded === false">
         <div class="inputRows">
-            <input v-model="state.name" type="text" placeholder="Type name here..." />
+            <input v-model.trim="state.name" type="text" placeholder="Type name here..." />
             <button type="submit" class="submitBtn">Add player 1</button>
 
         </div>
@@ -38,7 +38,7 @@ function handleSubmit() {
 
     <form @submit.prevent="handleSubmit" v-else>
         <div class="inputRows">
-            <input v-model="state.name" type="text" placeholder="Type name here..." />
+            <input v-model.trim="state.name" type="text" placeholder="Type name here..." />
             <button type="submit" class="submitBtn">Add player 2</button>
         </div>
     </form>
