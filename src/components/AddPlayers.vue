@@ -6,7 +6,6 @@ let state = ref<Player>({ name: "", role: "", score: 0 });
 const players = ref<Player[]>([]);
 
 let playerOneAdded = false;
-
 let emit = defineEmits(["startGame"])
 
 function handleSubmit() {

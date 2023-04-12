@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-let symbol = ref<string>("");
+
+defineProps<{ msg: string }>();
 
 </script>
 
 <template>
     <div class="square">
-        <h1>{{ symbol }}</h1>
+        <h1>{{ msg }}</h1>
     </div>
 </template>
 

@@ -2,7 +2,10 @@
 import { onMounted, ref } from 'vue';
 import ShowSquare from './ShowSquare.vue';
 import { Player } from '../models/Player';
+import ResetGame from './ResetGame.vue';
 
+//import list:
+defineProps<{ currentPlayers: Player[] }>()
 let playerList: Player[] = JSON.parse(
     localStorage.getItem("players") || "[]"
 );
@@ -14,11 +17,17 @@ onMounted(() => {
     // let playerY = playerList[1];
 });
 
+//set current player:
+let currentPlayer = ref<string>("Player X");
 
-let currentPlayer = ref<string>("");
+//set square symbol
+let playerSymbol = ref<string>("");
+
 
 function handleClick(i: number) {
     console.log("You clicked square: ", i)
+    playerSymbol.value = "X"
+
 }
 </script>
 
@@ -28,10 +37,12 @@ function handleClick(i: number) {
 
     <div class="container">
         <div class="board">
-            <ShowSquare @click.once="handleClick(index)" v-for="(square, index) in 9" :key="square" />
+            <ShowSquare :msg="playerSymbol" @click.once="handleClick(index)" v-for="(square, index) in 9" :key="square" />
         </div>
 
     </div>
+
+    <ResetGame />
 </template>
 
 <style scoped>
