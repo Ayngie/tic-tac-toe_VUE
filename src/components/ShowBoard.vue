@@ -1,32 +1,38 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import { Player } from '../models/Player';
 import ShowSquare from './ShowSquare.vue';
 
 //import list:
-let playerList: Player[] = JSON.parse(
-    localStorage.getItem("players") || "[]"
-);
+interface IShowBoardProps {
+    players: Player[]
+}
 
-onMounted(() => {
-    console.log(playerList[0])
-    console.log(playerList[1])
-    // let playerX = playerList[0];
-    // let playerY = playerList[1];
-});
+const props = defineProps<IShowBoardProps>();
 
-//set current player:
-let currentPlayer = ref<string>("Player X");
-
-//set square symbol
-let playerSymbol = ref<string>("");
-
+//Variables
+let currentPlayer = ref<Player>(props.players[0]);
+let xIsPlaying = ref<boolean>(true);
+let squares = ref<string[]>(["", "", "", "", "", "", "", "", ""])
 
 function handleClick(i: number) {
-    console.log("You clicked square: ", i)
-    playerSymbol.value = "X"
+    squares.value[i] = currentPlayer.value.role;
 
+    console.log(currentPlayer.value.name, "clicked square: ", i)
+
+    currentPlayer.value.role = xIsPlaying ? "X" : "O"; //fel
+
+    //switch from player 1 to player 2
+    if (currentPlayer.value.role === "X") {
+        xIsPlaying.value = false
+
+    }
+    //switch from player 2 to player 1
+    // else {
+    //     xIsPlaying.value = true
+    // }
 }
+
 
 //play again:
 function playAgain() {
@@ -45,11 +51,12 @@ function quitGame() {
 
 <template>
     <h1> Time to play tic-tac-toe</h1>
-    <h2>{{ currentPlayer }} - make your move!</h2>
+    <h2>{{ currentPlayer.name }} - make your move!</h2>
 
     <div class="container">
         <div class="board">
-            <ShowSquare :msg="playerSymbol" @click.once="handleClick(index)" v-for="(square, index) in 9" :key="square" />
+            <ShowSquare :symbol="squares[index]" @click.once="handleClick(index)" v-for="square, index in squares"
+                :key="square" />
         </div>
     </div>
 

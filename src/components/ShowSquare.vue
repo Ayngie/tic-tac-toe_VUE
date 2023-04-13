@@ -1,12 +1,16 @@
 <script setup lang="ts">
 
-defineProps<{ msg: string }>();
+//import list:
+interface IShowSquareProps {
+    symbol: string
+}
+defineProps<IShowSquareProps>();
 
 </script>
 
 <template>
     <div class="square">
-        <h1>{{ msg }}</h1>
+        <h1>{{ symbol }}</h1>
     </div>
 </template>
 
