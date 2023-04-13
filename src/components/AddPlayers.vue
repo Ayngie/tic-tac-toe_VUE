@@ -25,13 +25,13 @@ function handleSubmit() {
 </script>
 
 <template>
-    <h1> Welcome to this game of tic-tac-toe!</h1>
+    <h1> Let's play tic-tac-toe!</h1>
     <h2> Enter player names to start:</h2>
 
     <form @submit.prevent="handleSubmit" v-if="playerOneAdded === false">
         <div class="inputRows">
             <input v-model.trim="state.name" type="text" placeholder="Type name here..." />
-            <button type="submit" class="submitBtn">Add player 1</button>
+            <button type="submit" class="button">Add player 1</button>
 
         </div>
     </form>
@@ -39,7 +39,7 @@ function handleSubmit() {
     <form @submit.prevent="handleSubmit" v-else>
         <div class="inputRows">
             <input v-model.trim="state.name" type="text" placeholder="Type name here..." />
-            <button type="submit" class="submitBtn">Add player 2</button>
+            <button type="submit" class="button">Add player 2</button>
         </div>
     </form>
 
@@ -64,15 +64,24 @@ form {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    width: 35%;
+    width: 65%;
 }
 
 input {
     padding: 5px;
 }
 
-button:hover {
+.button {
+    margin: 10px;
+    background-color: rgb(221, 255, 221);
+}
+
+.button:hover {
     border-color: green;
+}
+
+.button:focus {
+    outline: 2px solid green;
 }
 
 .participant-header {

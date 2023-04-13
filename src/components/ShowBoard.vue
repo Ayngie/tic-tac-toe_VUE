@@ -12,6 +12,9 @@ const props = defineProps<IShowBoardProps>();
 
 //Variables
 let currentPlayer = ref<Player>(props.players[0]);
+let itsATie = false;
+let aPlayerHasWon = false;
+let winnerWas = ref<Player>({ name: "", symbol: "", score: 0 });
 
 let squares = ref<Square[]>([
     new Square("", false),
@@ -25,30 +28,55 @@ let squares = ref<Square[]>([
     new Square("", false),
 ]);
 
-
 //Play game
 function handleClick(i: number) {
-    if (squares.value[i].checked === false) {
-        squares.value[i].symbol = currentPlayer.value.symbol; //tilldela värde som ska skickas som symbol
-        squares.value[i].checked = true;
-        console.log(currentPlayer.value.name, "clicked square:", i, " which now has an:", currentPlayer.value.symbol)
+    if (!aPlayerHasWon) {
+        if (squares.value[i].checked === false) {
+            squares.value[i].symbol = currentPlayer.value.symbol; //tilldela värde som ska skickas som symbol
+            squares.value[i].checked = true;
+            console.log(currentPlayer.value.name, "clicked square:", i, " which now has an:", currentPlayer.value.symbol)
 
-        let didThisPlayerWin: boolean = false;
-        didThisPlayerWin = doWeHaveAWinner();
-        if (didThisPlayerWin === true) {
-            console.log(currentPlayer.value.name, "wins!");
-        }
+            //did somebody win?
+            let didThisPlayerWin: boolean = false;
+            didThisPlayerWin = doWeHaveAWinner(); //sätter didThisPlayerWin till true vid vinst
+            if (didThisPlayerWin === true) {
+                console.log(currentPlayer.value.name, "wins!");
+                aPlayerHasWon = true;
+                winnerWas.value = currentPlayer.value;
+            }
 
-        //toggla spelare
-        if (currentPlayer.value.symbol === "X") {
-            currentPlayer.value = props.players[1];
-        }
-        else {
-            currentPlayer.value = props.players[0];
-        }
-        console.log("It is now your turn", currentPlayer.value.name);
+            //is it a tie?
+            let isItATie: boolean = false;
+            isItATie = doWeHaveATie(); //sätter isItATie till true vid oavgjort
+            if (isItATie === true) {
+                console.log("Oops, it's a tie...");
+                itsATie = true;
+            }
 
+            //toggla spelare
+            if (currentPlayer.value.symbol === "X") {
+                currentPlayer.value = props.players[1];
+            }
+            else {
+                currentPlayer.value = props.players[0];
+            }
+            console.log("It is now your turn", currentPlayer.value.name);
+        }
     }
+}
+//Tie game:
+function doWeHaveATie() {
+    let allBoxesChecked = ref<number>(0);
+    for (let i = 0; i < squares.value.length; i++) {
+        if (squares.value[i].checked) {
+            allBoxesChecked.value++;
+        }
+    }
+    console.log("Nr of boxes checked:", allBoxesChecked.value)
+    if (allBoxesChecked.value === 9) {
+        return true; //returnerar true till vår boolean isItATie
+    }
+    return false; //return false (så ej blir true vs void)
 }
 
 //Win game:
@@ -74,14 +102,7 @@ function doWeHaveAWinner() {
     console.log(currentPlayer.value.name, "is Winner =", isWinner);
 
     return false;
-
 };
-
-// //End game:
-// function endGame() {
-//     console.log("End game");
-
-// }
 
 //Play again:
 function playAgain() {
@@ -90,6 +111,10 @@ function playAgain() {
         squares.value[i].checked = false;
     }
     currentPlayer.value = props.players[0];
+    itsATie = false;
+    aPlayerHasWon = false;
+    winnerWas.value = ({ name: "", symbol: "", score: 0 });
+
     console.log("You clicked the button 'Play again'!")
     console.log("It is now your turn", currentPlayer.value.name);
 }
@@ -104,20 +129,26 @@ function quitGame() {
 </script>
 
 <template>
-    <h1> Time to play tic-tac-toe</h1>
-    <h2>{{ currentPlayer.name }} - make your move!</h2>
-
+    <h1> Tic-tac-toe - {{ props.players[0].name }} vs. {{ props.players[1].name }}</h1>
+    <div v-if="!itsATie">
+        <h2 v-if="!aPlayerHasWon">{{ currentPlayer.name }} - make your move ({{ currentPlayer.symbol }})!</h2>
+        <h2 v-else-if="aPlayerHasWon" class="blink_me">Congrats {{ winnerWas.name }} - you won!</h2>
+    </div>
+    <div v-else-if="itsATie">
+        <h2>Ooops... It's a tie. Play again?</h2>
+    </div>
     <div class="container">
         <div class="board">
             <ShowSquare :symbol="squares[index].symbol" @click="handleClick(index)" v-for="square, index in squares"
-                :key="index" />
+                :key="index" :class="squares[index].symbol === 'X' ? 'X' : 'O'" />
         </div>
     </div>
 
     <div class="handle-game-buttons">
-        <button type="button" @click="playAgain()"> Play again
+        <button type="button" class="button" @click="playAgain()"> Play again
         </button>
-        <button type="button" @click.once="quitGame()"> Quit game
+        <button type="button" class="button" @click.once="quitGame()"> Quit
+            game
         </button>
     </div>
 </template>
@@ -125,6 +156,21 @@ function quitGame() {
 <style scoped>
 h1 {
     color: green;
+}
+
+.green {
+    color: green;
+}
+
+.blink_me {
+    color: gold;
+    animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0.5;
+    }
 }
 
 .container {
@@ -136,7 +182,7 @@ h1 {
 .board {
     display: flex;
     flex-wrap: wrap;
-    width: 500px;
+    width: 320px;
 }
 
 .index {
@@ -152,15 +198,28 @@ h1 {
     color: white;
 }
 
+.X {
+    color: purple;
+}
+
+.O {
+    color: salmon;
+}
+
 .handle-game-buttons {
     padding: 15px;
 }
 
-button {
+.button {
     margin: 10px;
+    background-color: rgb(221, 255, 221);
 }
 
-button:hover {
+.button:hover {
     border-color: green;
+}
+
+.button:focus {
+    outline: 2px solid green;
 }
 </style>

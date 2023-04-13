@@ -20,7 +20,7 @@ defineProps<IShowSquareProps>();
     justify-content: center;
     align-items: center;
     border: 2px solid green;
-    height: 150px;
-    width: 150px;
+    height: 102px;
+    width: 102px;
 }
 </style>
