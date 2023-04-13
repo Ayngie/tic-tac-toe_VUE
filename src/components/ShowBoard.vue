@@ -12,6 +12,8 @@ const props = defineProps<IShowBoardProps>();
 
 //Variables
 let currentPlayer = ref<Player>(props.players[0]);
+let aPlayerHasWon = false;
+let winnerWas = ref<Player>({ name: "", symbol: "", score: 0 });
 
 let squares = ref<Square[]>([
     new Square("", false),
@@ -34,9 +36,11 @@ function handleClick(i: number) {
         console.log(currentPlayer.value.name, "clicked square:", i, " which now has an:", currentPlayer.value.symbol)
 
         let didThisPlayerWin: boolean = false;
-        didThisPlayerWin = doWeHaveAWinner();
+        didThisPlayerWin = doWeHaveAWinner(); //sätter didThisPlayerWin till true vid vinst
         if (didThisPlayerWin === true) {
             console.log(currentPlayer.value.name, "wins!");
+            aPlayerHasWon = true;
+            winnerWas.value = currentPlayer.value;
         }
 
         //toggla spelare
@@ -90,6 +94,9 @@ function playAgain() {
         squares.value[i].checked = false;
     }
     currentPlayer.value = props.players[0];
+    aPlayerHasWon = false;
+    winnerWas.value = ({ name: "", symbol: "", score: 0 });
+
     console.log("You clicked the button 'Play again'!")
     console.log("It is now your turn", currentPlayer.value.name);
 }
@@ -105,7 +112,8 @@ function quitGame() {
 
 <template>
     <h1> Time to play tic-tac-toe</h1>
-    <h2>{{ currentPlayer.name }} - make your move!</h2>
+    <h2 v-if="!aPlayerHasWon">{{ currentPlayer.name }} - make your move!</h2>
+    <h2 v-else-if="aPlayerHasWon">Congrats {{ winnerWas.name }} - you won!</h2>
 
     <div class="container">
         <div class="board">
