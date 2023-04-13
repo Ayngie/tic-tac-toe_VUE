@@ -3,14 +3,14 @@ import { ref } from 'vue';
 import { Player } from '../models/Player';
 
 const players = ref<Player[]>([]);
-let state = ref<Player>({ name: "", role: "", score: 0 });
+let state = ref<Player>({ name: "", symbol: "", score: 0 });
 let playerOneAdded = false;
 
 let emit = defineEmits(["startGame"])
 
 function handleSubmit() {
     players.value.push(new Player(state.value.name, players.value.length === 0 ? "X" : "O", state.value.score));
-    state.value = { name: "", role: "", score: 0 } //rensa inputrutorna
+    state.value = { name: "", symbol: "", score: 0 } //rensa inputrutorna
     playerOneAdded = true;
 
     if (players.value.length === 2) {

@@ -1,47 +1,60 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Player } from '../models/Player';
+import { Square } from "../models/Square"
 import ShowSquare from './ShowSquare.vue';
 
-//import list:
+//Import list:
 interface IShowBoardProps {
     players: Player[]
 }
-
 const props = defineProps<IShowBoardProps>();
 
 //Variables
 let currentPlayer = ref<Player>(props.players[0]);
-let xIsPlaying = ref<boolean>(true);
-let squares = ref<string[]>(["", "", "", "", "", "", "", "", ""])
+let squares = ref<Square[]>([
+    new Square(""),
+    new Square(""),
+    new Square(""),
+    new Square(""),
+    new Square(""),
+    new Square(""),
+    new Square(""),
+    new Square(""),
+    new Square(""),
+]);
 
-function handleClick(i: number) {
-    squares.value[i] = currentPlayer.value.role;
+//Play game
+function handleClick(i: number) { //hantera once
+    squares.value[i].symbol = currentPlayer.value.symbol; //tilldela värde som ska skickas som symbol
+    console.log(currentPlayer.value, "clicked square: ", i)
 
-    console.log(currentPlayer.value.name, "clicked square: ", i)
+    doWeHaveAWinner(squares.value);
 
-    currentPlayer.value.role = xIsPlaying ? "X" : "O"; //fel
-
-    //switch from player 1 to player 2
-    if (currentPlayer.value.role === "X") {
-        xIsPlaying.value = false
-
+    //toggla spelare
+    if (currentPlayer.value.symbol === "X") {
+        currentPlayer.value = props.players[1];
     }
-    //switch from player 2 to player 1
-    // else {
-    //     xIsPlaying.value = true
-    // }
+    else {
+        currentPlayer.value = props.players[0];
+    }
+    console.log(currentPlayer.value);
+
 }
 
+//Win game:
+function doWeHaveAWinner(squares: Square[]) {
+    console.log("Squares: ", squares)
 
-//play again:
+};
+
+//Play again:
 function playAgain() {
     console.log("You clicked the button 'Play again'!")
 }
 
-//quit game:
+//Quit game:
 let emit = defineEmits(["quitGame"])
-
 function quitGame() {
     console.log("You clicked the button 'Quit game'!")
     emit("quitGame")
@@ -55,8 +68,8 @@ function quitGame() {
 
     <div class="container">
         <div class="board">
-            <ShowSquare :symbol="squares[index]" @click.once="handleClick(index)" v-for="square, index in squares"
-                :key="square" />
+            <ShowSquare :symbol="squares[index].symbol" @click.once="handleClick(index)" v-for="square, index in squares"
+                :key="index" />
         </div>
     </div>
 
@@ -85,15 +98,15 @@ h1 {
     width: 500px;
 }
 
-.square {
+.index {
     margin: 2px;
 }
 
-.square:hover {
+.index:hover {
     cursor: pointer;
 }
 
-.square:active {
+.index:active {
     background-color: green;
     color: white;
 }
