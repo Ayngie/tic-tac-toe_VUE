@@ -27,31 +27,31 @@ let squares = ref<Square[]>([
     new Square("", false),
 ]);
 
-
 //Play game
 function handleClick(i: number) {
-    if (squares.value[i].checked === false) {
-        squares.value[i].symbol = currentPlayer.value.symbol; //tilldela värde som ska skickas som symbol
-        squares.value[i].checked = true;
-        console.log(currentPlayer.value.name, "clicked square:", i, " which now has an:", currentPlayer.value.symbol)
+    if (!aPlayerHasWon) {
+        if (squares.value[i].checked === false) {
+            squares.value[i].symbol = currentPlayer.value.symbol; //tilldela värde som ska skickas som symbol
+            squares.value[i].checked = true;
+            console.log(currentPlayer.value.name, "clicked square:", i, " which now has an:", currentPlayer.value.symbol)
 
-        let didThisPlayerWin: boolean = false;
-        didThisPlayerWin = doWeHaveAWinner(); //sätter didThisPlayerWin till true vid vinst
-        if (didThisPlayerWin === true) {
-            console.log(currentPlayer.value.name, "wins!");
-            aPlayerHasWon = true;
-            winnerWas.value = currentPlayer.value;
-        }
+            let didThisPlayerWin: boolean = false;
+            didThisPlayerWin = doWeHaveAWinner(); //sätter didThisPlayerWin till true vid vinst
+            if (didThisPlayerWin === true) {
+                console.log(currentPlayer.value.name, "wins!");
+                aPlayerHasWon = true;
+                winnerWas.value = currentPlayer.value;
+            }
 
-        //toggla spelare
-        if (currentPlayer.value.symbol === "X") {
-            currentPlayer.value = props.players[1];
+            //toggla spelare
+            if (currentPlayer.value.symbol === "X") {
+                currentPlayer.value = props.players[1];
+            }
+            else {
+                currentPlayer.value = props.players[0];
+            }
+            console.log("It is now your turn", currentPlayer.value.name);
         }
-        else {
-            currentPlayer.value = props.players[0];
-        }
-        console.log("It is now your turn", currentPlayer.value.name);
-
     }
 }
 
@@ -78,14 +78,7 @@ function doWeHaveAWinner() {
     console.log(currentPlayer.value.name, "is Winner =", isWinner);
 
     return false;
-
 };
-
-// //End game:
-// function endGame() {
-//     console.log("End game");
-
-// }
 
 //Play again:
 function playAgain() {
