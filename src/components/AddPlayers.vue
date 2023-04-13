@@ -2,25 +2,26 @@
 import { ref } from 'vue';
 import { Player } from '../models/Player';
 
-let state = ref<Player>({ name: "", playerWins: false });
 const players = ref<Player[]>([]);
-
+let state = ref<Player>({ name: "", symbol: "", score: 0 });
 let playerOneAdded = false;
 
 let emit = defineEmits(["startGame"])
 
 function handleSubmit() {
-    players.value.push(new Player(state.value.name, false));
-    state.value = { name: "", playerWins: false } //rensa inputrutorna
+    players.value.push(new Player(state.value.name, players.value.length === 0 ? "X" : "O", state.value.score));
+    state.value = { name: "", symbol: "", score: 0 } //rensa inputrutorna
     playerOneAdded = true;
-    console.log(players.value)
 
     if (players.value.length === 2) {
-        console.log("There are now two players")
-        //emit starta spel // ändra gameOn till true
-        emit("startGame")
-        localStorage.setItem("players", JSON.stringify(players.value));
+        //emit starta spel (som kommer ändra gameOn till true) 
+        console.log("There are now two players, start game!")
+        console.log("Player 1 is: ", players.value[0])
+        console.log("Player 2 is: ", players.value[1])
+
+        emit("startGame", players.value) //här i anropet skickar vi med vad vi vill emitta till förädern.
     }
+
 }
 </script>
 
@@ -30,7 +31,7 @@ function handleSubmit() {
 
     <form @submit.prevent="handleSubmit" v-if="playerOneAdded === false">
         <div class="inputRows">
-            <input v-model="state.name" type="text" placeholder="Type name here..." />
+            <input v-model.trim="state.name" type="text" placeholder="Type name here..." />
             <button type="submit" class="submitBtn">Add player 1</button>
 
         </div>
@@ -38,19 +39,23 @@ function handleSubmit() {
 
     <form @submit.prevent="handleSubmit" v-else>
         <div class="inputRows">
-            <input v-model="state.name" type="text" placeholder="Type name here..." />
+            <input v-model.trim="state.name" type="text" placeholder="Type name here..." />
             <button type="submit" class="submitBtn">Add player 2</button>
         </div>
     </form>
 
 
     <div v-if="playerOneAdded">
-        <p>Game participants:</p>
-        <div v-for="player in players" class="participant-names"> {{ player.name }} </div>
+        <span class="participant-header">Game participants: </span>
+        <span v-for="player in players" class="participant-names"> {{ player.name + ", " }} </span>
     </div>
 </template>
 
 <style scoped>
+h1 {
+    color: green;
+}
+
 form {
     display: flex;
     justify-content: center;
@@ -67,11 +72,17 @@ input {
     padding: 5px;
 }
 
-h1 {
+button:hover {
+    border-color: green;
+}
+
+.participant-header {
     color: green;
+    font-weight: bold;
 }
 
 .participant-names {
+    color: green;
     font-style: italic;
 }
 </style>

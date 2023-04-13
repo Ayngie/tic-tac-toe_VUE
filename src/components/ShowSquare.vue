@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-let symbol = ref<string>("");
+
+//import list:
+interface IShowSquareProps {
+    symbol: string
+}
+defineProps<IShowSquareProps>();
 
 </script>
 
