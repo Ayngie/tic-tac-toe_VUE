@@ -25,7 +25,7 @@ function handleSubmit() {
 </script>
 
 <template>
-    <h1> Welcome to this game of tic-tac-toe!</h1>
+    <h1> Let's play tic-tac-toe!</h1>
     <h2> Enter player names to start:</h2>
 
     <form @submit.prevent="handleSubmit" v-if="playerOneAdded === false">
@@ -64,7 +64,7 @@ form {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    width: 35%;
+    width: 60%;
 }
 
 input {

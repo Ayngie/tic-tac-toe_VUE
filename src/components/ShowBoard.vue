@@ -104,21 +104,22 @@ function quitGame() {
 </script>
 
 <template>
-    <h1> Time to play tic-tac-toe</h1>
-    <h2 v-if="!aPlayerHasWon">{{ currentPlayer.name }} - make your move!</h2>
-    <h2 v-else-if="aPlayerHasWon">Congrats {{ winnerWas.name }} - you won!</h2>
+    <h1> Tic-tac-toe - {{ props.players[0].name }} vs. {{ props.players[1].name }}</h1>
+    <h2 v-if="!aPlayerHasWon">{{ currentPlayer.name }} - make your move ({{ currentPlayer.symbol }})!</h2>
+    <h2 v-else-if="aPlayerHasWon" class="blink_me">Congrats {{ winnerWas.name }} - you won!</h2>
 
     <div class="container">
         <div class="board">
             <ShowSquare :symbol="squares[index].symbol" @click="handleClick(index)" v-for="square, index in squares"
-                :key="index" />
+                :key="index" :class="squares[index].symbol === 'X' ? 'X' : 'O'" />
         </div>
     </div>
 
     <div class="handle-game-buttons">
-        <button type="button" @click="playAgain()"> Play again
+        <button type="button" class="button" @click="playAgain()"> Play again
         </button>
-        <button type="button" @click.once="quitGame()"> Quit game
+        <button type="button" class="button" @click.once="quitGame()"> Quit
+            game
         </button>
     </div>
 </template>
@@ -126,6 +127,21 @@ function quitGame() {
 <style scoped>
 h1 {
     color: green;
+}
+
+.green {
+    color: green;
+}
+
+.blink_me {
+    color: gold;
+    animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0.5;
+    }
 }
 
 .container {
@@ -137,7 +153,7 @@ h1 {
 .board {
     display: flex;
     flex-wrap: wrap;
-    width: 500px;
+    width: 320px;
 }
 
 .index {
@@ -153,15 +169,28 @@ h1 {
     color: white;
 }
 
+.X {
+    color: purple;
+}
+
+.O {
+    color: salmon;
+}
+
 .handle-game-buttons {
     padding: 15px;
 }
 
-button {
+.button {
     margin: 10px;
+    background-color: rgb(221, 255, 221);
 }
 
-button:hover {
+.button:hover {
     border-color: green;
+}
+
+.button:focus {
+    outline: 2px solid green;
 }
 </style>
