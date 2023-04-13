@@ -46,11 +46,14 @@ function handleClick(i: number) {
             }
 
             //is it a tie?
-            let isItATie: boolean = false;
-            isItATie = doWeHaveATie(); //sätter isItATie till true vid oavgjort
-            if (isItATie === true) {
-                console.log("Oops, it's a tie...");
-                itsATie = true;
+            let allBoxesChecked: boolean = false;
+            allBoxesChecked = doWeHaveATie(); //sätter isItATie till true vid oavgjort
+            if (allBoxesChecked === true) {
+                console.log("All boxes are checked.");
+                if (!aPlayerHasWon) {
+                    console.log("Oops, it's a tie...");
+                    itsATie = true;
+                }
             }
 
             //toggla spelare
@@ -66,15 +69,15 @@ function handleClick(i: number) {
 }
 //Tie game:
 function doWeHaveATie() {
-    let allBoxesChecked = ref<number>(0);
+    let areAllBoxesChecked = ref<number>(0);
     for (let i = 0; i < squares.value.length; i++) {
         if (squares.value[i].checked) {
-            allBoxesChecked.value++;
+            areAllBoxesChecked.value++;
         }
     }
-    console.log("Nr of boxes checked:", allBoxesChecked.value)
-    if (allBoxesChecked.value === 9) {
-        return true; //returnerar true till vår boolean isItATie
+    console.log("Nr of boxes checked:", areAllBoxesChecked.value)
+    if (areAllBoxesChecked.value === 9) {
+        return true; //returnerar true till vår boolean allBoxesChecked
     }
     return false; //return false (så ej blir true vs void)
 }
