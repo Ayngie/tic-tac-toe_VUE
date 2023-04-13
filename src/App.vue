@@ -14,11 +14,8 @@ function toggleGameOn(players: Player[]) { //här kommer listan med från AddPla
 
 function quitGame() {
   gameOn.value = false;
-  let playerList: Player[] = JSON.parse(
-    localStorage.getItem("players") || "[]"
-  );
-  playerList = [];
-  console.log("PlayerList is now empty: ", playerList);
+  playerList.value = [];
+  console.log("PlayerList is now empty: ", playerList.value);
 }
 </script>
 

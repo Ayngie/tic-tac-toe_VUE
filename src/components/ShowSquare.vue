@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-//import list:
+//Get symbols:
 interface IShowSquareProps {
     symbol: string
 }

@@ -21,7 +21,6 @@ function handleSubmit() {
 
         emit("startGame", players.value) //här i anropet skickar vi med vad vi vill emitta till förädern.
     }
-
 }
 </script>
 
