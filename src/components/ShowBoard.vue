@@ -14,68 +14,84 @@ const props = defineProps<IShowBoardProps>();
 let currentPlayer = ref<Player>(props.players[0]);
 
 let squares = ref<Square[]>([
-    new Square(""),
-    new Square(""),
-    new Square(""),
-    new Square(""),
-    new Square(""),
-    new Square(""),
-    new Square(""),
-    new Square(""),
-    new Square(""),
+    new Square("", false),
+    new Square("", false),
+    new Square("", false),
+    new Square("", false),
+    new Square("", false),
+    new Square("", false),
+    new Square("", false),
+    new Square("", false),
+    new Square("", false),
 ]);
 
+
 //Play game
-function handleClick(i: number) { //hantera once
-    squares.value[i].symbol = currentPlayer.value.symbol; //tilldela värde som ska skickas som symbol
-    console.log(currentPlayer.value.name, "clicked square:", i, " which now has an:", currentPlayer.value.symbol)
+function handleClick(i: number) {
+    if (squares.value[i].checked === false) {
+        squares.value[i].symbol = currentPlayer.value.symbol; //tilldela värde som ska skickas som symbol
+        squares.value[i].checked = true;
+        console.log(currentPlayer.value.name, "clicked square:", i, " which now has an:", currentPlayer.value.symbol)
 
-    let didThisPlayerWin: Boolean = false;
-    doWeHaveAWinner();
-    if (didThisPlayerWin === true) {
-        console.log(currentPlayer.value.name, "wins!");
-    }
+        let didThisPlayerWin: boolean = false;
+        didThisPlayerWin = doWeHaveAWinner();
+        if (didThisPlayerWin === true) {
+            console.log(currentPlayer.value.name, "wins!");
+        }
 
-    //toggla spelare
-    if (currentPlayer.value.symbol === "X") {
-        currentPlayer.value = props.players[1];
-    }
-    else {
-        currentPlayer.value = props.players[0];
-    }
-    console.log("It is now your turn", currentPlayer.value.name);
+        //toggla spelare
+        if (currentPlayer.value.symbol === "X") {
+            currentPlayer.value = props.players[1];
+        }
+        else {
+            currentPlayer.value = props.players[0];
+        }
+        console.log("It is now your turn", currentPlayer.value.name);
 
+    }
 }
 
 //Win game:
 function doWeHaveAWinner() {
 
     let winningCombos = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [2, 5, 8], [1, 4, 7], [0, 3, 6], [0, 4, 8], [2, 4, 6]];
-    let isWinner: Boolean = true;
+    let isWinner: boolean = true;
 
-    for (let i = 0; i < winningCombos.length; i++) { //för varje list-objekt i listan med vinnarkombinationer
+    for (let i = 0; i < winningCombos.length; i++) { // för varje list-objekt i listan med vinnarkombinationer
         let winningComboToCheck = winningCombos[i] // den vinnarkombo i "stora listan" som vi ska kolla
         let squareValuesFromThisGame = squares.value;
+        isWinner = true; //måste nollställas innan varje loop
 
         for (let j = 0; j < winningComboToCheck.length; j++) { //för varje vinnarkombination
 
-            let positionToGetValueFrom = winningComboToCheck[j]; //positionerna som om de har samma symbol ska ge vinst
-            if (squareValuesFromThisGame[positionToGetValueFrom].symbol !== currentPlayer.value.symbol) { // Om värdet av den positionen på vår lista är X.
+            let positionToGetValueFrom = winningComboToCheck[j]; //position på listobjektet (en möljig vinstkombo)
+            if (squareValuesFromThisGame[positionToGetValueFrom].symbol !== currentPlayer.value.symbol) { // Om värdet av den positionen på vår lista inte är värdet av nuvarande spelare.
                 isWinner = false;
             }
         }
-        return true //returnerar true till vår boolean precis innan anropet av doWeHaveAWinner - dvs variabeln doWeHaveAWinner som var satt till false. Om vi har fått en vinnare här returnas nu true.
+        if (isWinner) return true //returnerar true till vår boolean precis innan anropet av doWeHaveAWinner - dvs variabeln doWeHaveAWinner som var satt till false. Om vi har fått en vinnare här returnas nu true.
     }
-    console.log(isWinner);
+    console.log(currentPlayer.value.name, "is Winner =", isWinner);
+
+    return false;
 
 };
+
+// //End game:
+// function endGame() {
+//     console.log("End game");
+
+// }
 
 //Play again:
 function playAgain() {
     for (let i = 0; i < squares.value.length; i++) {
         squares.value[i].symbol = "";
+        squares.value[i].checked = false;
     }
+    currentPlayer.value = props.players[0];
     console.log("You clicked the button 'Play again'!")
+    console.log("It is now your turn", currentPlayer.value.name);
 }
 
 //Quit game:
@@ -93,13 +109,13 @@ function quitGame() {
 
     <div class="container">
         <div class="board">
-            <ShowSquare :symbol="squares[index].symbol" @click.once="handleClick(index)" v-for="square, index in squares"
+            <ShowSquare :symbol="squares[index].symbol" @click="handleClick(index)" v-for="square, index in squares"
                 :key="index" />
         </div>
     </div>
 
     <div class="handle-game-buttons">
-        <button type="button" @click.once="playAgain()"> Play again
+        <button type="button" @click="playAgain()"> Play again
         </button>
         <button type="button" @click.once="quitGame()"> Quit game
         </button>
