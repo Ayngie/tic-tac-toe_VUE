@@ -69,6 +69,7 @@ form {
 
 input {
     padding: 5px;
+    color: green;
 }
 
 input:hover {
