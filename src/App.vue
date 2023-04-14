@@ -4,11 +4,27 @@ import AddPlayers from './components/AddPlayers.vue';
 import ShowBoard from './components/ShowBoard.vue';
 import { Player } from './models/Player';
 
+//variables
 let gameOn = ref<boolean>(false);
 let playerList = ref<Player[]>([]); //vi skapar ett state för vår lista som emittas hit från AddPlayer
 
+let storedPlayersList: Player[] = JSON.parse(
+  localStorage.getItem("players") || "[]"
+);
+
+if (storedPlayersList.length === 0) {
+  toggleGameOn(playerList.value);
+}
+if (storedPlayersList.length > 0) {
+  playerList.value = storedPlayersList;
+  console.log("Updated playerList is:", playerList.value);
+
+  toggleGameOn(playerList.value);
+}
+
 function toggleGameOn(players: Player[]) { //här kommer listan med från AddPlayers -emiten.
   gameOn.value = true;
+  localStorage.setItem("gameOn", JSON.stringify(gameOn)); //spara boolean att spel är igång
   playerList.value = players; //tilldelar statet värdet av listan vi tog emot
 }
 
