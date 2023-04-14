@@ -71,6 +71,18 @@ input {
     padding: 5px;
 }
 
+input:hover {
+    border-color: green;
+    border-radius: 3px;
+}
+
+input:focus {
+    outline: 2px solid green;
+    border-radius: 3px;
+    border: none;
+}
+
+
 .button {
     margin: 10px;
     background-color: rgb(221, 255, 221);
