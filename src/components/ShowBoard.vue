@@ -28,6 +28,8 @@ let squares = ref<Square[]>([
     new Square("", false),
     new Square("", false),
 ]);
+let ongoingGame = ref(false);
+
 
 //Set to localStorage:
 // // squares list
@@ -44,7 +46,7 @@ console.log(playerList)
 if (storedPlayersList.length > 0) {
     playerList.value = storedPlayersList;
     console.log("Updated playerList is:", playerList.value);
-
+    ongoingGame.value = true;
 }
 // // squares list
 // // currentPlayer
@@ -162,7 +164,7 @@ function quitGame() {
     <div v-if="!itsATie">
         <h2 v-if="!aPlayerHasWon">{{ currentPlayer.name }} - make your move ({{ currentPlayer.symbol }})!</h2>
         <h2 v-else-if="aPlayerHasWon" class="blink_me">Congrats {{ winnerWas.name }} - you won!</h2>
-        <p v-if="weHaveAScore">Score is: {{ props.players[0].name }}: {{ props.players[0].score }} vs. {{
+        <p v-if="weHaveAScore || ongoingGame">Score is: {{ props.players[0].name }}: {{ props.players[0].score }} vs. {{
             props.players[1].name }}:
             {{ props.players[1].score }};
         </p>
