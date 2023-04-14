@@ -12,10 +12,10 @@ const props = defineProps<IShowBoardProps>();
 
 //Variables
 let currentPlayer = ref<Player>(props.players[0]);
-let itsATie = false;
+let itsATie = ref(false);
 let aPlayerHasWon = false;
 let winnerWas = ref<Player>({ name: "", symbol: "", score: 0 });
-
+let weHaveAScore = ref(false);
 let squares = ref<Square[]>([
     new Square("", false),
     new Square("", false),
@@ -43,6 +43,9 @@ function handleClick(i: number) {
                 console.log(currentPlayer.value.name, "wins!");
                 aPlayerHasWon = true;
                 winnerWas.value = currentPlayer.value;
+                currentPlayer.value.score++; //increase winners score
+                console.log("Score is:", props.players[0].name, ":", props.players[0].score, "vs.", props.players[1].name, ":", props.players[1].score);
+                weHaveAScore.value = true;
             }
 
             //is it a tie?
@@ -52,7 +55,7 @@ function handleClick(i: number) {
                 console.log("All boxes are checked.");
                 if (!aPlayerHasWon) {
                     console.log("Oops, it's a tie...");
-                    itsATie = true;
+                    itsATie.value = true;
                 }
             }
 
@@ -114,7 +117,7 @@ function playAgain() {
         squares.value[i].checked = false;
     }
     currentPlayer.value = props.players[0];
-    itsATie = false;
+    itsATie.value = false;
     aPlayerHasWon = false;
     winnerWas.value = ({ name: "", symbol: "", score: 0 });
 
@@ -136,6 +139,10 @@ function quitGame() {
     <div v-if="!itsATie">
         <h2 v-if="!aPlayerHasWon">{{ currentPlayer.name }} - make your move ({{ currentPlayer.symbol }})!</h2>
         <h2 v-else-if="aPlayerHasWon" class="blink_me">Congrats {{ winnerWas.name }} - you won!</h2>
+        <p v-if="weHaveAScore">Score is: {{ props.players[0].name }}: {{ props.players[0].score }} vs. {{
+            props.players[1].name }}:
+            {{ props.players[1].score }};
+        </p>
     </div>
     <div v-else-if="itsATie">
         <h2>Ooops... It's a tie. Play again?</h2>
