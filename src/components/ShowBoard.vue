@@ -34,14 +34,13 @@ let ongoingGame = ref(false);
 //Set to localStorage:
 // // squares list
 // // currentPlayer
-// // weHaveAScore
 
 //Retrieve from localStorage:
 // // players list
 let storedPlayersList: Player[] = JSON.parse(
     localStorage.getItem("players") || "[]"
 );
-console.log(playerList)
+// console.log(playerList)
 
 if (storedPlayersList.length > 0) {
     playerList.value = storedPlayersList;
@@ -50,7 +49,10 @@ if (storedPlayersList.length > 0) {
 }
 // // squares list
 // // currentPlayer
-// // weHaveAScore
+if (ongoingGame) {
+    currentPlayer.value = JSON.parse(
+        localStorage.getItem("currentPlayer") || "");
+}
 
 //Play game
 function handleClick(i: number) {
@@ -92,6 +94,8 @@ function handleClick(i: number) {
                 currentPlayer.value = props.players[0];
             }
             // console.log("It is now your turn", currentPlayer.value.name);
+            if (ongoingGame) localStorage.setItem("currentPlayer", JSON.stringify(currentPlayer.value)); //save to local storage
+
         }
     }
 }
@@ -145,7 +149,7 @@ function playAgain() {
     itsATie.value = false;
     aPlayerHasWon = false;
     winnerWas.value = ({ name: "", symbol: "", score: 0 });
-
+    ongoingGame.value = false
     // console.log("You clicked the button 'Play again'!")
     // console.log("It is now your turn", currentPlayer.value.name);
 }
