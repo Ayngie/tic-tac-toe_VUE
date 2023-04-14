@@ -11,6 +11,7 @@ interface IShowBoardProps {
 const props = defineProps<IShowBoardProps>();
 
 //Variables
+let playerList = ref<Player[]>(props.players);
 let currentPlayer = ref<Player>(props.players[0]);
 let itsATie = ref(false);
 let aPlayerHasWon = false;
@@ -27,6 +28,50 @@ let squares = ref<Square[]>([
     new Square("", false),
     new Square("", false),
 ]);
+let ongoingGame = ref(false);
+
+
+//Retrieve players list from localStorage:
+let storedPlayersList: Player[] = JSON.parse(
+    localStorage.getItem("players") || "[]"
+);
+// console.log(playerList)
+if (storedPlayersList.length > 0) {
+    playerList.value = storedPlayersList;
+    console.log("Updated playerList is:", playerList.value);
+    ongoingGame.value = true;
+}
+
+//Retrieve squares list from localStorage:
+let storedSquaresList: Square[] = JSON.parse(
+    localStorage.getItem("storedSquares") || "[]"
+);
+if (storedSquaresList.length > 0) {
+    squares.value = storedSquaresList;
+}
+
+//Retrieve currentPlayer from localStorage:
+if (ongoingGame) {
+    currentPlayer.value = JSON.parse(
+        localStorage.getItem("currentPlayer") || "");
+}
+
+//Retrieve winner from localStorage:
+let storedAPlayerHasWon: boolean = JSON.parse(
+    localStorage.getItem("storeThatAPlayerHasWon") || "[]"
+);
+if (storedAPlayerHasWon === true) {
+    aPlayerHasWon = true;
+}
+
+//ongoing game winner header
+let storedWinner: Player = JSON.parse(
+    localStorage.getItem("storeWinner") || ""
+);
+if (storedWinner.name !== "") {
+    winnerWas.value = storedWinner;
+}
+
 
 //Play game
 function handleClick(i: number) {
@@ -34,17 +79,21 @@ function handleClick(i: number) {
         if (squares.value[i].checked === false) {
             squares.value[i].symbol = currentPlayer.value.symbol; //tilldela värde som ska skickas som symbol
             squares.value[i].checked = true;
-            console.log(currentPlayer.value.name, "clicked square:", i, " which now has an:", currentPlayer.value.symbol)
+            // console.log(currentPlayer.value.name, "clicked square:", i, " which now has an:", currentPlayer.value.symbol)
+            localStorage.setItem("storedSquares", JSON.stringify(squares.value)); //save to local storage
 
             //did somebody win?
             let didThisPlayerWin: boolean = false;
             didThisPlayerWin = doWeHaveAWinner(); //sätter didThisPlayerWin till true vid vinst
             if (didThisPlayerWin === true) {
-                console.log(currentPlayer.value.name, "wins!");
+                // console.log(currentPlayer.value.name, "wins!");
                 aPlayerHasWon = true;
+                localStorage.setItem("storeThatAPlayerHasWon", JSON.stringify(aPlayerHasWon)); //save to local storage
                 winnerWas.value = currentPlayer.value;
+                localStorage.setItem("storeWinner", JSON.stringify(winnerWas.value)); //save to local storage
                 currentPlayer.value.score++; //increase winners score
-                console.log("Score is:", props.players[0].name, ":", props.players[0].score, "vs.", props.players[1].name, ":", props.players[1].score);
+                // console.log("Score is:", props.players[0].name, ":", props.players[0].score, "vs.", props.players[1].name, ":", props.players[1].score);
+                localStorage.setItem("players", JSON.stringify(props.players)); //save to local storage
                 weHaveAScore.value = true;
             }
 
@@ -52,9 +101,9 @@ function handleClick(i: number) {
             let allBoxesChecked: boolean = false;
             allBoxesChecked = doWeHaveATie(); //sätter isItATie till true vid oavgjort
             if (allBoxesChecked === true) {
-                console.log("All boxes are checked.");
+                // console.log("All boxes are checked.");
                 if (!aPlayerHasWon) {
-                    console.log("Oops, it's a tie...");
+                    // console.log("Oops, it's a tie...");
                     itsATie.value = true;
                 }
             }
@@ -66,7 +115,12 @@ function handleClick(i: number) {
             else {
                 currentPlayer.value = props.players[0];
             }
-            console.log("It is now your turn", currentPlayer.value.name);
+            // console.log("It is now your turn", currentPlayer.value.name);
+
+
+            if (ongoingGame) {
+                localStorage.setItem("currentPlayer", JSON.stringify(currentPlayer.value)); //save to local storage
+            }
         }
     }
 }
@@ -105,7 +159,7 @@ function doWeHaveAWinner() {
         }
         if (isWinner) return true //returnerar true till vår boolean precis innan anropet av doWeHaveAWinner - dvs variabeln doWeHaveAWinner som var satt till false. Om vi har fått en vinnare här returnas nu true.
     }
-    console.log(currentPlayer.value.name, "is Winner =", isWinner);
+    // console.log(currentPlayer.value.name, "is Winner =", isWinner);
 
     return false;
 };
@@ -116,19 +170,19 @@ function playAgain() {
         squares.value[i].symbol = "";
         squares.value[i].checked = false;
     }
-    currentPlayer.value = props.players[0];
+    currentPlayer.value = props.players[0]; //ändra till ej vinnare? Så man alternerar?
     itsATie.value = false;
     aPlayerHasWon = false;
     winnerWas.value = ({ name: "", symbol: "", score: 0 });
-
-    console.log("You clicked the button 'Play again'!")
-    console.log("It is now your turn", currentPlayer.value.name);
+    ongoingGame.value = false
+    // console.log("You clicked the button 'Play again'!")
+    // console.log("It is now your turn", currentPlayer.value.name);
 }
 
 //Quit game:
 let emit = defineEmits(["quitGame"])
 function quitGame() {
-    console.log("You clicked the button 'Quit game'!")
+    // console.log("You clicked the button 'Quit game'!")
     emit("quitGame")
 }
 
@@ -138,8 +192,8 @@ function quitGame() {
     <h1> Tic-tac-toe - {{ props.players[0].name }} vs. {{ props.players[1].name }}</h1>
     <div v-if="!itsATie">
         <h2 v-if="!aPlayerHasWon">{{ currentPlayer.name }} - make your move ({{ currentPlayer.symbol }})!</h2>
-        <h2 v-else-if="aPlayerHasWon" class="blink_me">Congrats {{ winnerWas.name }} - you won!</h2>
-        <p v-if="weHaveAScore">Score is: {{ props.players[0].name }}: {{ props.players[0].score }} vs. {{
+        <h2 v-else-if="aPlayerHasWon || ongoingGame" class="blink_me">Congrats {{ winnerWas.name }} - you won!</h2>
+        <p v-if="weHaveAScore || ongoingGame">Score is: {{ props.players[0].name }}: {{ props.players[0].score }} vs. {{
             props.players[1].name }}:
             {{ props.players[1].score }};
         </p>
