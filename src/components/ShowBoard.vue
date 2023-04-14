@@ -170,7 +170,6 @@ function playAgain() {
         squares.value[i].symbol = "";
         squares.value[i].checked = false;
     }
-    currentPlayer.value = props.players[0]; //ändra till ej vinnare? Så man alternerar?
     itsATie.value = false;
     aPlayerHasWon = false;
     winnerWas.value = ({ name: "", symbol: "", score: 0 });
