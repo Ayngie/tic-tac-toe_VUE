@@ -31,28 +31,47 @@ let squares = ref<Square[]>([
 let ongoingGame = ref(false);
 
 
-//Set to localStorage:
-// // squares list
-// // currentPlayer
-
-//Retrieve from localStorage:
-// // players list
+//Retrieve players list from localStorage:
 let storedPlayersList: Player[] = JSON.parse(
     localStorage.getItem("players") || "[]"
 );
 // console.log(playerList)
-
 if (storedPlayersList.length > 0) {
     playerList.value = storedPlayersList;
     console.log("Updated playerList is:", playerList.value);
     ongoingGame.value = true;
 }
-// // squares list
-// // currentPlayer
+
+//Retrieve squares list from localStorage:
+let storedSquaresList: Square[] = JSON.parse(
+    localStorage.getItem("storedSquares") || "[]"
+);
+if (storedSquaresList.length > 0) {
+    squares.value = storedSquaresList;
+}
+
+//Retrieve currentPlayer from localStorage:
 if (ongoingGame) {
     currentPlayer.value = JSON.parse(
         localStorage.getItem("currentPlayer") || "");
 }
+
+//Retrieve winner from localStorage:
+let storedAPlayerHasWon: boolean = JSON.parse(
+    localStorage.getItem("storeThatAPlayerHasWon") || "[]"
+);
+if (storedAPlayerHasWon === true) {
+    aPlayerHasWon = true;
+}
+
+//ongoing game winner header
+let storedWinner: Player = JSON.parse(
+    localStorage.getItem("storeWinner") || ""
+);
+if (storedWinner.name !== "") {
+    winnerWas.value = storedWinner;
+}
+
 
 //Play game
 function handleClick(i: number) {
@@ -61,6 +80,7 @@ function handleClick(i: number) {
             squares.value[i].symbol = currentPlayer.value.symbol; //tilldela värde som ska skickas som symbol
             squares.value[i].checked = true;
             // console.log(currentPlayer.value.name, "clicked square:", i, " which now has an:", currentPlayer.value.symbol)
+            localStorage.setItem("storedSquares", JSON.stringify(squares.value)); //save to local storage
 
             //did somebody win?
             let didThisPlayerWin: boolean = false;
@@ -68,10 +88,12 @@ function handleClick(i: number) {
             if (didThisPlayerWin === true) {
                 // console.log(currentPlayer.value.name, "wins!");
                 aPlayerHasWon = true;
+                localStorage.setItem("storeThatAPlayerHasWon", JSON.stringify(aPlayerHasWon)); //save to local storage
                 winnerWas.value = currentPlayer.value;
+                localStorage.setItem("storeWinner", JSON.stringify(winnerWas.value)); //save to local storage
                 currentPlayer.value.score++; //increase winners score
                 // console.log("Score is:", props.players[0].name, ":", props.players[0].score, "vs.", props.players[1].name, ":", props.players[1].score);
-                localStorage.setItem("players", JSON.stringify(props.players)); //save score to local storage
+                localStorage.setItem("players", JSON.stringify(props.players)); //save to local storage
                 weHaveAScore.value = true;
             }
 
@@ -94,8 +116,11 @@ function handleClick(i: number) {
                 currentPlayer.value = props.players[0];
             }
             // console.log("It is now your turn", currentPlayer.value.name);
-            if (ongoingGame) localStorage.setItem("currentPlayer", JSON.stringify(currentPlayer.value)); //save to local storage
 
+
+            if (ongoingGame) {
+                localStorage.setItem("currentPlayer", JSON.stringify(currentPlayer.value)); //save to local storage
+            }
         }
     }
 }
@@ -167,7 +192,7 @@ function quitGame() {
     <h1> Tic-tac-toe - {{ props.players[0].name }} vs. {{ props.players[1].name }}</h1>
     <div v-if="!itsATie">
         <h2 v-if="!aPlayerHasWon">{{ currentPlayer.name }} - make your move ({{ currentPlayer.symbol }})!</h2>
-        <h2 v-else-if="aPlayerHasWon" class="blink_me">Congrats {{ winnerWas.name }} - you won!</h2>
+        <h2 v-else-if="aPlayerHasWon || ongoingGame" class="blink_me">Congrats {{ winnerWas.name }} - you won!</h2>
         <p v-if="weHaveAScore || ongoingGame">Score is: {{ props.players[0].name }}: {{ props.players[0].score }} vs. {{
             props.players[1].name }}:
             {{ props.players[1].score }};
