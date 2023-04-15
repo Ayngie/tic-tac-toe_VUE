@@ -11,12 +11,13 @@ interface IShowBoardProps {
 const props = defineProps<IShowBoardProps>();
 
 //Variables
+let ongoingGame = false;
 let playerList = ref<Player[]>(props.players);
 let currentPlayer = ref<Player>(props.players[0]);
-let itsATie = ref(false);
+let itsATie = false;
 let aPlayerHasWon = false;
 let winnerWas = ref<Player>({ name: "", symbol: "", score: 0 });
-let weHaveAScore = ref(false);
+let weHaveAScore = false;
 let squares = ref<Square[]>([
     new Square("", false),
     new Square("", false),
@@ -28,21 +29,19 @@ let squares = ref<Square[]>([
     new Square("", false),
     new Square("", false),
 ]);
-let ongoingGame = ref(false);
 
-
-//Retrieve players list from localStorage:
+// Retrieve ongoing game players list from localStorage:
 let storedPlayersList: Player[] = JSON.parse(
     localStorage.getItem("players") || "[]"
 );
 // console.log(playerList)
 if (storedPlayersList.length > 0) {
     playerList.value = storedPlayersList;
-    console.log("Updated playerList is:", playerList.value);
-    ongoingGame.value = true;
+    // console.log("Updated playerList is:", playerList.value);
+    ongoingGame = true;
 }
 
-//Retrieve squares list from localStorage:
+//Retrieve ongoing game squares list from localStorage:
 let storedSquaresList: Square[] = JSON.parse(
     localStorage.getItem("storedSquares") || "[]"
 );
@@ -50,21 +49,20 @@ if (storedSquaresList.length > 0) {
     squares.value = storedSquaresList;
 }
 
-//Retrieve currentPlayer from localStorage:
-if (ongoingGame) {
+//Retrieve ongoing game currentPlayer from localStorage:
+if (ongoingGame === true) {
     currentPlayer.value = JSON.parse(
         localStorage.getItem("currentPlayer") || "");
 }
 
-//Retrieve winner from localStorage:
+//Retrieve ongoing game winner from localStorage:
 let storedAPlayerHasWon: boolean = JSON.parse(
-    localStorage.getItem("storeThatAPlayerHasWon") || "[]"
-);
+    localStorage.getItem("storeThatAPlayerHasWon") || "");
 if (storedAPlayerHasWon === true) {
     aPlayerHasWon = true;
 }
 
-//ongoing game winner header
+// Maintain ongoing game winner header
 let storedWinner: Player = JSON.parse(
     localStorage.getItem("storeWinner") || ""
 );
@@ -94,7 +92,7 @@ function handleClick(i: number) {
                 currentPlayer.value.score++; //increase winners score
                 // console.log("Score is:", props.players[0].name, ":", props.players[0].score, "vs.", props.players[1].name, ":", props.players[1].score);
                 localStorage.setItem("players", JSON.stringify(props.players)); //save to local storage
-                weHaveAScore.value = true;
+                weHaveAScore = true;
             }
 
             //is it a tie?
@@ -104,19 +102,18 @@ function handleClick(i: number) {
                 // console.log("All boxes are checked.");
                 if (!aPlayerHasWon) {
                     // console.log("Oops, it's a tie...");
-                    itsATie.value = true;
+                    itsATie = true;
                 }
             }
 
             //toggla spelare
             if (currentPlayer.value.symbol === "X") {
-                currentPlayer.value = props.players[1];
+                currentPlayer.value = props.players[1]; // VÄNTA NU, STÄMMER DETTA? Det är väl spelare O?
             }
             else {
                 currentPlayer.value = props.players[0];
             }
             // console.log("It is now your turn", currentPlayer.value.name);
-
 
             if (ongoingGame) {
                 localStorage.setItem("currentPlayer", JSON.stringify(currentPlayer.value)); //save to local storage
@@ -124,6 +121,7 @@ function handleClick(i: number) {
         }
     }
 }
+
 //Tie game:
 function doWeHaveATie() {
     let areAllBoxesChecked = ref<number>(0);
@@ -132,7 +130,7 @@ function doWeHaveATie() {
             areAllBoxesChecked.value++;
         }
     }
-    console.log("Nr of boxes checked:", areAllBoxesChecked.value)
+    // console.log("Nr of boxes checked:", areAllBoxesChecked.value)
     if (areAllBoxesChecked.value === 9) {
         return true; //returnerar true till vår boolean allBoxesChecked
     }
@@ -170,10 +168,10 @@ function playAgain() {
         squares.value[i].symbol = "";
         squares.value[i].checked = false;
     }
-    itsATie.value = false;
+    itsATie = false;
     aPlayerHasWon = false;
     winnerWas.value = ({ name: "", symbol: "", score: 0 });
-    ongoingGame.value = false
+    ongoingGame = false
     // console.log("You clicked the button 'Play again'!")
     // console.log("It is now your turn", currentPlayer.value.name);
 }

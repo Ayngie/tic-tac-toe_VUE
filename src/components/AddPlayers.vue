@@ -10,9 +10,10 @@ let playerOneAdded = false;
 //emit
 let emit = defineEmits(["startGame"])
 
-//Set to localStorage:
+//Set players to localStorage:
 localStorage.setItem("players", JSON.stringify(players));
 
+//Add players
 function handleSubmit() {
     players.value.push(new Player(state.value.name, players.value.length === 0 ? "X" : "O", state.value.score));
     state.value = { name: "", symbol: "", score: 0 } //rensa inputrutorna
@@ -20,10 +21,9 @@ function handleSubmit() {
 
     if (players.value.length === 2) {
         //emit starta spel (som kommer ändra gameOn till true) 
-        console.log("There are now two players, start game!")
-        console.log("Player 1 is: ", players.value[0])
-        console.log("Player 2 is: ", players.value[1])
-
+        // console.log("There are now two players, start game!")
+        // console.log("Player 1 is: ", players.value[0])
+        // console.log("Player 2 is: ", players.value[1])
         emit("startGame", players.value) //här i anropet skickar vi med vad vi vill emitta till förädern.
     }
 }
