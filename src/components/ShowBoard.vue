@@ -51,8 +51,12 @@ if (storedSquaresList.length > 0) {
 
 //Retrieve ongoing game currentPlayer from localStorage:
 if (ongoingGame === true) {
-    currentPlayer.value = JSON.parse(
+    let storedCurrentPlayer: Player = JSON.parse(
         localStorage.getItem("currentPlayer") || "");
+
+    if (storedCurrentPlayer.name !== "") {
+        currentPlayer.value = storedCurrentPlayer;
+    }
 }
 
 //Retrieve ongoing game winner from localStorage:
