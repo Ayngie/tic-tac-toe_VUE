@@ -38,6 +38,7 @@ let storedSquaresList: Square[] = JSON.parse(
 if (storedSquaresList.length > 0) {
     squares.value = storedSquaresList;
 }
+
 //Play game
 function handleClick(i: number) {
     if (!aPlayerHasWon) {
@@ -90,7 +91,7 @@ function handleClick(i: number) {
             }
             console.log("It is now your turn", currentPlayer.value.name);
 
-            // localStorage.setItem("currentPlayer", JSON.stringify(currentPlayer.value)); //save to local storage
+            // if (ongoingGame) localStorage.setItem("storedCurrentPlayer", JSON.stringify(currentPlayer.value));
         }
     }
 }
