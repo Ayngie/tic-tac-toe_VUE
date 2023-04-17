@@ -12,7 +12,6 @@ interface IShowBoardProps {
 const props = defineProps<IShowBoardProps>();
 
 //Variables
-// let playerList = ref<Player[]>(props.players);
 let currentPlayer = ref<Player>(props.players[0]);
 let itsATie = ref(false);
 let aPlayerHasWon = false;
@@ -32,22 +31,13 @@ let squares = ref<Square[]>([
 let ongoingGame = ref(props.gameOn); //blir true om spel är igång!
 
 // Retrieve from localStorage: 
-
-// squares list
+// // squares list
 let storedSquaresList: Square[] = JSON.parse(
     localStorage.getItem("storedSquares") || "[]"
 );
 if (storedSquaresList.length > 0) {
     squares.value = storedSquaresList;
 }
-
-// current player
-// if (ongoingGame) {
-//     currentPlayer = JSON.parse(
-//         localStorage.getItem("currentPlayer") || "[]"
-//     );
-// }
-
 //Play game
 function handleClick(i: number) {
     if (!aPlayerHasWon) {
@@ -55,7 +45,7 @@ function handleClick(i: number) {
             squares.value[i].symbol = currentPlayer.value.symbol; //tilldela värde som ska skickas som symbol
             squares.value[i].checked = true;
             console.log(currentPlayer.value.name, "clicked square:", i, " which now has an:", currentPlayer.value.symbol)
-            localStorage.setItem("storedSquares", JSON.stringify(squares.value)); //save to local storage
+            localStorage.setItem("storedSquares", JSON.stringify(squares.value));
 
             //did somebody win?
             let didThisPlayerWin: boolean = false;
@@ -63,18 +53,19 @@ function handleClick(i: number) {
             if (didThisPlayerWin === true) {
                 console.log(currentPlayer.value.name, "wins!");
                 aPlayerHasWon = true;
-                // localStorage.setItem("storeThatAPlayerHasWon", JSON.stringify(aPlayerHasWon)); //save to local storage
+
+                //winner has won, mark all squares as checked
                 for (let i = 0; i < squares.value.length; i++) {
                     squares.value[i].checked = true;
                 }
-                localStorage.setItem("storedSquares", JSON.stringify(squares.value)); //save to local storage
+                localStorage.setItem("storedSquares", JSON.stringify(squares.value));
 
                 winnerWas.value = currentPlayer.value;
-                localStorage.setItem("storeWinner", JSON.stringify(winnerWas.value)); //save to local storage
+                localStorage.setItem("storeWinner", JSON.stringify(winnerWas.value));
 
                 currentPlayer.value.score++; //increase winners score
                 console.log("Score is:", props.players[0].name, ":", props.players[0].score, "vs.", props.players[1].name, ":", props.players[1].score);
-                localStorage.setItem("storedPlayers", JSON.stringify(props.players)); //save to local storage
+                localStorage.setItem("storedPlayers", JSON.stringify(props.players));
 
                 weHaveAScore.value = true;
             }
@@ -92,7 +83,7 @@ function handleClick(i: number) {
 
             //toggla spelare
             if (currentPlayer.value.symbol === "X") {
-                currentPlayer.value = props.players[1]; // VÄNTA NU, STÄMMER DETTA? Det är väl spelare O?
+                currentPlayer.value = props.players[1];
             }
             else {
                 currentPlayer.value = props.players[0];
@@ -112,7 +103,7 @@ function doWeHaveATie() {
             areAllBoxesChecked.value++;
         }
     }
-    // console.log("Nr of boxes checked:", areAllBoxesChecked.value)
+    console.log("Nr of boxes checked:", areAllBoxesChecked.value)
     if (areAllBoxesChecked.value === 9) {
         return true; //returnerar true till vår boolean allBoxesChecked
     }
@@ -139,7 +130,7 @@ function doWeHaveAWinner() {
         }
         if (isWinner) return true //returnerar true till vår boolean precis innan anropet av doWeHaveAWinner - dvs variabeln doWeHaveAWinner som var satt till false. Om vi har fått en vinnare här returnas nu true.
     }
-    // console.log(currentPlayer.value.name, "is Winner =", isWinner);
+    console.log(currentPlayer.value.name, "is Winner =", isWinner);
 
     return false;
 };
