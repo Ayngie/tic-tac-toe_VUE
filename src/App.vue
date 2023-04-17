@@ -15,7 +15,7 @@ let storedPlayersList: Player[] = JSON.parse(
 
 if (storedPlayersList.length > 0) {
   playerList.value = storedPlayersList;
-  // console.log("Updated playerList is:", playerList.value);
+  console.log("Updated playerList is:", playerList.value);
   toggleGameOn(playerList.value);
 }
 
@@ -30,7 +30,7 @@ function toggleGameOn(players: Player[]) { //här kommer listan med från AddPla
 function quitGame() {
   gameOn.value = false;
   playerList.value = [];
-  // console.log("PlayerList is now empty: ", playerList.value);
+  console.log("PlayerList is now empty: ", playerList.value);
 }
 </script>
 
