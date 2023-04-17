@@ -12,7 +12,7 @@ interface IShowBoardProps {
 const props = defineProps<IShowBoardProps>();
 
 //Variables
-let playerList = ref<Player[]>(props.players);
+// let playerList = ref<Player[]>(props.players);
 let currentPlayer = ref<Player>(props.players[0]);
 let itsATie = ref(false);
 let aPlayerHasWon = false;
@@ -41,31 +41,12 @@ if (storedSquaresList.length > 0) {
     squares.value = storedSquaresList;
 }
 
-// if (ongoingGame.value === true) {
-//     // currentPlayer
-//     let storedCurrentPlayer: Player = JSON.parse(
-//         localStorage.getItem("currentPlayer") || "");
-
-//     if (storedCurrentPlayer.name !== "") {
-//         currentPlayer.value = storedCurrentPlayer;
-//     }
+// current player
+// if (ongoingGame) {
+//     currentPlayer = JSON.parse(
+//         localStorage.getItem("currentPlayer") || "[]"
+//     );
 // }
-
-// // game winner
-// let storedAPlayerHasWon: boolean = JSON.parse(
-//     localStorage.getItem("storeThatAPlayerHasWon") || "");
-// if (storedAPlayerHasWon === true) {
-//     aPlayerHasWon = true;
-// }
-
-// // winner header
-// let storedWinner: Player = JSON.parse(
-//     localStorage.getItem("storeWinner") || ""
-// );
-// if (storedWinner.name !== "") {
-//     winnerWas.value = storedWinner;
-// }
-
 
 //Play game
 function handleClick(i: number) {
@@ -83,11 +64,18 @@ function handleClick(i: number) {
                 console.log(currentPlayer.value.name, "wins!");
                 aPlayerHasWon = true;
                 // localStorage.setItem("storeThatAPlayerHasWon", JSON.stringify(aPlayerHasWon)); //save to local storage
+                for (let i = 0; i < squares.value.length; i++) {
+                    squares.value[i].checked = true;
+                }
+                localStorage.setItem("storedSquares", JSON.stringify(squares.value)); //save to local storage
+
                 winnerWas.value = currentPlayer.value;
-                // localStorage.setItem("storeWinner", JSON.stringify(winnerWas.value)); //save to local storage
+                localStorage.setItem("storeWinner", JSON.stringify(winnerWas.value)); //save to local storage
+
                 currentPlayer.value.score++; //increase winners score
-                // console.log("Score is:", props.players[0].name, ":", props.players[0].score, "vs.", props.players[1].name, ":", props.players[1].score);
-                // localStorage.setItem("players", JSON.stringify(props.players)); //save to local storage
+                console.log("Score is:", props.players[0].name, ":", props.players[0].score, "vs.", props.players[1].name, ":", props.players[1].score);
+                localStorage.setItem("storedPlayers", JSON.stringify(props.players)); //save to local storage
+
                 weHaveAScore.value = true;
             }
 
@@ -95,9 +83,9 @@ function handleClick(i: number) {
             let allBoxesChecked: boolean = false;
             allBoxesChecked = doWeHaveATie(); //sätter isItATie till true vid oavgjort
             if (allBoxesChecked === true) {
-                // console.log("All boxes are checked.");
+                console.log("All boxes are checked.");
                 if (!aPlayerHasWon) {
-                    // console.log("Oops, it's a tie...");
+                    console.log("Oops, it's a tie...");
                     itsATie.value = true;
                 }
             }
@@ -109,12 +97,9 @@ function handleClick(i: number) {
             else {
                 currentPlayer.value = props.players[0];
             }
-            // console.log("It is now your turn", currentPlayer.value.name);
+            console.log("It is now your turn", currentPlayer.value.name);
 
-            if (ongoingGame) {
-                // localStorage.setItem("currentPlayer", JSON.stringify(currentPlayer.value)); //save to local storage
-            }
-
+            // localStorage.setItem("currentPlayer", JSON.stringify(currentPlayer.value)); //save to local storage
         }
     }
 }
@@ -161,6 +146,8 @@ function doWeHaveAWinner() {
 
 //Play again:
 function playAgain() {
+    localStorage.setItem("storedSquares", JSON.stringify(squares.value)); //save to local storage
+
     for (let i = 0; i < squares.value.length; i++) {
         squares.value[i].symbol = "";
         squares.value[i].checked = false;
@@ -169,18 +156,15 @@ function playAgain() {
     aPlayerHasWon = false;
     winnerWas.value = ({ name: "", symbol: "", score: 0 });
     ongoingGame.value = false
-    // console.log("You clicked the button 'Play again'!")
-    // console.log("It is now your turn", currentPlayer.value.name);
+    console.log("You clicked the button 'Play again'!")
+    console.log("It is now your turn", currentPlayer.value.name);
 }
 
 //Quit game:
 let emit = defineEmits(["quitGame"])
 function quitGame() {
     localStorage.clear();
-    // squares.value = [{ symbol: "", checked: false }, { symbol: "", checked: false }, { symbol: "", checked: false }, { symbol: "", checked: false }, { symbol: "", checked: false }, { symbol: "", checked: false }, { symbol: "", checked: false }, { symbol: "", checked: false }, { symbol: "", checked: false }
-    // ];
-    // localStorage.setItem("storedSquares", JSON.stringify(squares.value)); //save to local storage
-    // console.log("You clicked the button 'Quit game'!")
+    console.log("You clicked the button 'Quit game'!")
     emit("quitGame")
 }
 </script>
@@ -190,7 +174,7 @@ function quitGame() {
     <div v-if="!itsATie">
         <h2 v-if="!aPlayerHasWon">{{ currentPlayer.name }} - make your move ({{ currentPlayer.symbol }})!</h2>
         <h2 v-else-if="aPlayerHasWon" class="blink_me">Congrats {{ winnerWas.name }} - you won!</h2>
-        <p v-if="weHaveAScore">Score is: {{ props.players[0].name }}: {{ props.players[0].score }} vs. {{
+        <p v-if="weHaveAScore || ongoingGame">Score is: {{ props.players[0].name }}: {{ props.players[0].score }} vs. {{
             props.players[1].name }}:
             {{ props.players[1].score }};
         </p>
