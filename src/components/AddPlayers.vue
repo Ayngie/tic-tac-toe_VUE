@@ -10,8 +10,6 @@ let playerOneAdded = false;
 //emit
 let emit = defineEmits(["startGame"])
 
-//Set players to localStorage:
-localStorage.setItem("players", JSON.stringify(players));
 
 //Add players
 function handleSubmit() {
