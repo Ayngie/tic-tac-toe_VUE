@@ -37,6 +37,7 @@ let storedSquaresList: Square[] = JSON.parse(
 );
 if (storedSquaresList.length > 0) {
     squares.value = storedSquaresList;
+    localStorage.setItem("storedSquares", JSON.stringify(squares.value));
 }
 
 //Play game
@@ -90,8 +91,6 @@ function handleClick(i: number) {
                 currentPlayer.value = props.players[0];
             }
             console.log("It is now your turn", currentPlayer.value.name);
-
-            // if (ongoingGame) localStorage.setItem("storedCurrentPlayer", JSON.stringify(currentPlayer.value));
         }
     }
 }
@@ -104,6 +103,8 @@ function doWeHaveATie() {
             areAllBoxesChecked.value++;
         }
     }
+    localStorage.setItem("storedSquares", JSON.stringify(squares.value));
+
     console.log("Nr of boxes checked:", areAllBoxesChecked.value)
     if (areAllBoxesChecked.value === 9) {
         return true; //returnerar true till vår boolean allBoxesChecked
