@@ -10,9 +10,8 @@ let playerOneAdded = false;
 //emit
 let emit = defineEmits(["startGame"])
 
-//Set to localStorage:
-localStorage.setItem("players", JSON.stringify(players));
 
+//Add players
 function handleSubmit() {
     players.value.push(new Player(state.value.name, players.value.length === 0 ? "X" : "O", state.value.score));
     state.value = { name: "", symbol: "", score: 0 } //rensa inputrutorna
