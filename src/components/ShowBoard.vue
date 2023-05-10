@@ -7,7 +7,6 @@ import ShowSquare from './ShowSquare.vue';
 //Get list of players:
 interface IShowBoardProps {
     players: Player[]
-    gameOn: boolean
 }
 const props = defineProps<IShowBoardProps>();
 
@@ -28,17 +27,6 @@ let squares = ref<Square[]>([
     new Square("", false),
     new Square("", false),
 ]);
-let ongoingGame = ref(props.gameOn); //blir true om spel är igång!
-
-// Retrieve from localStorage: 
-// // squares list
-let storedSquaresList: Square[] = JSON.parse(
-    localStorage.getItem("storedSquares") || "[]"
-);
-if (storedSquaresList.length > 0) {
-    squares.value = storedSquaresList;
-    localStorage.setItem("storedSquares", JSON.stringify(squares.value));
-}
 
 //Play game
 function handleClick(i: number) {
@@ -47,7 +35,6 @@ function handleClick(i: number) {
             squares.value[i].symbol = currentPlayer.value.symbol; //tilldela värde som ska skickas som symbol
             squares.value[i].checked = true;
             console.log(currentPlayer.value.name, "clicked square:", i, " which now has an:", currentPlayer.value.symbol)
-            localStorage.setItem("storedSquares", JSON.stringify(squares.value));
 
             //did somebody win?
             let didThisPlayerWin: boolean = false;
@@ -55,20 +42,9 @@ function handleClick(i: number) {
             if (didThisPlayerWin === true) {
                 console.log(currentPlayer.value.name, "wins!");
                 aPlayerHasWon = true;
-
-                //winner has won, mark all squares as checked
-                for (let i = 0; i < squares.value.length; i++) {
-                    squares.value[i].checked = true;
-                }
-                localStorage.setItem("storedSquares", JSON.stringify(squares.value));
-
                 winnerWas.value = currentPlayer.value;
-                localStorage.setItem("storeWinner", JSON.stringify(winnerWas.value));
-
                 currentPlayer.value.score++; //increase winners score
                 console.log("Score is:", props.players[0].name, ":", props.players[0].score, "vs.", props.players[1].name, ":", props.players[1].score);
-                localStorage.setItem("storedPlayers", JSON.stringify(props.players));
-
                 weHaveAScore.value = true;
             }
 
@@ -94,7 +70,6 @@ function handleClick(i: number) {
         }
     }
 }
-
 //Tie game:
 function doWeHaveATie() {
     let areAllBoxesChecked = ref<number>(0);
@@ -103,8 +78,6 @@ function doWeHaveATie() {
             areAllBoxesChecked.value++;
         }
     }
-    localStorage.setItem("storedSquares", JSON.stringify(squares.value));
-
     console.log("Nr of boxes checked:", areAllBoxesChecked.value)
     if (areAllBoxesChecked.value === 9) {
         return true; //returnerar true till vår boolean allBoxesChecked
@@ -139,16 +112,15 @@ function doWeHaveAWinner() {
 
 //Play again:
 function playAgain() {
-    localStorage.setItem("storedSquares", JSON.stringify(squares.value)); //save to local storage
-
     for (let i = 0; i < squares.value.length; i++) {
         squares.value[i].symbol = "";
         squares.value[i].checked = false;
     }
+    currentPlayer.value = props.players[0];
     itsATie.value = false;
     aPlayerHasWon = false;
     winnerWas.value = ({ name: "", symbol: "", score: 0 });
-    ongoingGame.value = false
+
     console.log("You clicked the button 'Play again'!")
     console.log("It is now your turn", currentPlayer.value.name);
 }
@@ -156,10 +128,10 @@ function playAgain() {
 //Quit game:
 let emit = defineEmits(["quitGame"])
 function quitGame() {
-    localStorage.clear();
     console.log("You clicked the button 'Quit game'!")
     emit("quitGame")
 }
+
 </script>
 
 <template>
@@ -167,7 +139,7 @@ function quitGame() {
     <div v-if="!itsATie">
         <h2 v-if="!aPlayerHasWon">{{ currentPlayer.name }} - make your move ({{ currentPlayer.symbol }})!</h2>
         <h2 v-else-if="aPlayerHasWon" class="blink_me">Congrats {{ winnerWas.name }} - you won!</h2>
-        <p v-if="weHaveAScore || ongoingGame">Score is: {{ props.players[0].name }}: {{ props.players[0].score }} vs. {{
+        <p v-if="weHaveAScore">Score is: {{ props.players[0].name }}: {{ props.players[0].score }} vs. {{
             props.players[1].name }}:
             {{ props.players[1].score }};
         </p>

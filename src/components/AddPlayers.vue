@@ -2,16 +2,12 @@
 import { ref } from 'vue';
 import { Player } from '../models/Player';
 
-//variables
 const players = ref<Player[]>([]);
 let state = ref<Player>({ name: "", symbol: "", score: 0 });
 let playerOneAdded = false;
 
-//emit
 let emit = defineEmits(["startGame"])
 
-
-//Add players
 function handleSubmit() {
     players.value.push(new Player(state.value.name, players.value.length === 0 ? "X" : "O", state.value.score));
     state.value = { name: "", symbol: "", score: 0 } //rensa inputrutorna
